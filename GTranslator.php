@@ -115,18 +115,18 @@ class GTranslator
         return $this->getResult();
     }
 
-    public function translateArray(array $array)
+    public function translateArray($textsArray)
     {        
-        $array = array_map(function($value) { return $this->wrapFormat($value); }, $array);
+        $textsArray = array_map(function($value) { return $this->wrapFormat($value); }, $textsArray);
 
-        $text = implode(self::ITEM_DELIMITER, $array);
+        $text = implode(self::ITEM_DELIMITER, $textsArray);
         $this->fetchText($text);
         $result = $this->getResult();
         $resultArray = explode(self::ITEM_DELIMITER, $result);
                 
         $i = 0;
         $translated = [];
-        foreach ($array as $key => $value) {
+        foreach ($textsArray as $key => $value) {
             $translated[$key] = (isset($resultArray[$i])) ? $resultArray[$i] : '';
             $i++;
         }
@@ -136,9 +136,9 @@ class GTranslator
         return $translated;
     }
 
-    public function exportToPhpFile($array, $fileName)
+    public function exportToPhpFile($translationsArray, $fileName)
     {
-        $contents = var_export($array, true);
+        $contents = var_export($translationsArray, true);
         file_put_contents($fileName, "<?php\nreturn {$contents};\n");
     }
 }
