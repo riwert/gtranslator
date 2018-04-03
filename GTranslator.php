@@ -11,7 +11,6 @@ class GTranslator
 {
     const API_URL = 'https://translate.google.com/translate_a/single?client=at&dt=t&dt=ld&dt=qca&dt=rm&dt=bd&dj=1&ie=UTF-8&oe=UTF-8';
     const USER_AGENT = 'AndroidTranslate/5.3.0.RC02.130475354-53000263 5.1 phone TRANSLATE_OPM5_TEST_1';
-    const DETECT_LANGUAGE = false;
     const ITEM_DELIMITER = "\n";
 
     private $sourceLanguage = 'en';
@@ -24,22 +23,11 @@ class GTranslator
 
     public function __construct($sourceLanguage = null, $targetLanguage = null)
     {
-        if (self::DETECT_LANGUAGE) {
-            $this->detectLanguage();
-        }
         if ($sourceLanguage) {
             $this->sourceLanguage = $sourceLanguage;
         }
         if ($targetLanguage) {
             $this->targetLanguage = $targetLanguage;
-        }
-    }
-
-    private function detectLanguage()
-    {
-        $language = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2);
-        if ($language) {
-            $this->targetLanguage = $language;
         }
     }
 
