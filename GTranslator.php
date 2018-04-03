@@ -169,7 +169,11 @@ class GTranslator
 
         $translations = (require $fileName);
 
-        if (! $languages) {
+        if (is_string($languages)) {
+            $languages = [$languages];
+        }
+
+        if (empty($languages)) {
             $languages = $this->targetLanguages;
         }
 
@@ -191,7 +195,7 @@ class GTranslator
         }
 
         echo 'File ' . $fileName . ' has been updated with '
-            . implode(', ', $this->targetLanguages)
+            . implode(', ', $languages)
             . ' language translations.'."\n" ;
 
         $this->removeBackupFile($backupName);
