@@ -58,7 +58,7 @@ PHP file with translations:
 return [
     'en' => [
         'key' => 'Text to translate.',
-    ]
+    ],
 ];
 
 ```
