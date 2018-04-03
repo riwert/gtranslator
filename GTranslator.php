@@ -15,7 +15,7 @@ class GTranslator
 
     private $sourceLanguage = 'en';
     private $targetLanguage = 'pl';
-    private $targetLanguages = ['pl', 'de', 'es'];
+    private $targetLanguages = ['pl', 'de', 'es', 'ru'];
     private $fields;
     private $result;
     private $format = ['%d', '%s'];
