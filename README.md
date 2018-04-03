@@ -48,7 +48,7 @@ $gTranslator->exportToPhpFile($translations, 'translations.php');
 require_once('GTranslator.php');
 
 $gTranslator = new GTranslator();
-$gTranslator->updateTranslations('translations.php');
+$gTranslator->updateTranslations('translations.php', ['pl', 'de', 'es']);
 
 ```
 PHP file with translations:
