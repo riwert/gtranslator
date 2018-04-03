@@ -16,6 +16,7 @@ class GTranslator
 
     private $sourceLanguage = 'en';
     private $targetLanguage = 'pl';
+    private $targetLanguages = ['pl', 'de', 'es'];
     private $fields;
     private $result;
     private $format = ['%d', '%s'];
@@ -84,6 +85,22 @@ class GTranslator
         return str_replace($this->formatWrap, $this->format, $text);
     }
 
+    private function backupFile($fileName, $backupName)
+    {
+        if (! file_exists($fileName)) {
+            throw new \Exception('File: ' . $fileName . ' does not exists.');
+        }
+        copy($fileName, $backupName);
+    }
+
+    private function removeBackupFile($backupName)
+    {
+        if (! file_exists($backupName)) {
+            throw new \Exception('File: ' . $backupName . ' does not exists.');
+        }
+        unlink($backupName);
+    }
+
     public function getJsonResult()
     {
         return $this->result;
@@ -116,21 +133,21 @@ class GTranslator
     }
 
     public function translateArray($textsArray)
-    {        
+    {
         $textsArray = array_map(function($value) { return $this->wrapFormat($value); }, $textsArray);
 
         $text = implode(self::ITEM_DELIMITER, $textsArray);
         $this->fetchText($text);
         $result = $this->getResult();
         $resultArray = explode(self::ITEM_DELIMITER, $result);
-                
+
         $i = 0;
         $translated = [];
         foreach ($textsArray as $key => $value) {
             $translated[$key] = (isset($resultArray[$i])) ? $resultArray[$i] : '';
             $i++;
         }
-        
+
         $translated = array_map(function($value) { return $this->unWrapFormat($value); }, $translated);
 
         return $translated;
@@ -140,5 +157,45 @@ class GTranslator
     {
         $contents = var_export($translationsArray, true);
         file_put_contents($fileName, "<?php\nreturn {$contents};\n");
+
+        return true;
+    }
+
+    public function updateTranslations($fileName, $languages = null)
+    {
+        if (! file_exists($fileName)) {
+            throw new \Exception('File: ' . $fileName . ' does not exists.');
+        }
+
+        $translations = (require $fileName);
+
+        if (! $languages) {
+            $languages = $this->targetLanguages;
+        }
+
+        foreach ($languages as $language) {
+            if (! is_array($translations[$this->sourceLanguage])) {
+                throw new \Exception('Translations in source language: ' . $this->sourceLanguage . ' do not exist.');
+            }
+            $textsArray = $translations[$this->sourceLanguage];
+            $this->targetLanguage = $language;
+            $translations[$language] = $this->translateArray($textsArray);
+        }
+
+        $now = date('YmdHis');
+        $backupName = $fileName . '~' . $now;
+        $this->backupFile($fileName, $backupName);
+
+        if (! $this->exportToPhpFile($translations, $fileName)) {
+            throw new \Exception('Error while exporting translations to file: ' . $fileName . '.');
+        }
+
+        echo 'File ' . $fileName . ' has been updated with '
+            . implode(', ', $this->targetLanguages)
+            . ' language translations.'."\n" ;
+
+        $this->removeBackupFile($backupName);
+
+        return true;
     }
 }
