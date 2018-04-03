@@ -2,7 +2,7 @@
 /**
  * GTranslator
  *
- * Translate text or array between multiple languages.
+ * Translate between multiple languages using Google Translate.
  *
  * @author Robert Wierzchowski <revert@revert.pl>
  * @version 1.0.0
